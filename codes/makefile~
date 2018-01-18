@@ -1,0 +1,23 @@
+server:
+	g++ socket_tcp.cpp -o a.out -lrt
+	./a.out
+client1:
+	g++ socket-client.cpp -o b.out
+	./b.out "127.0.0.1"
+client2:
+	g++ socket-client.cpp -o c.out
+	./c.out "127.0.0.1"
+worker:
+	g++ worker.cpp -o worker.out
+	./worker.out "127.0.0.1" worker
+<<<<<<< HEAD
+worker1:
+	g++ worker.cpp -o worker1.out
+	./worker1.out "127.0.0.1" worker
+=======
+worker:
+	g++ worker.cpp -o worker.out
+	./worker.out "127.0.0.1" worker
+>>>>>>> ea607456436a3d1fe0c46a781e2a6bdbc76fc413
+delete:
+	rm *.out

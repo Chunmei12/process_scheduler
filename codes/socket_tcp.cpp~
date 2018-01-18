@@ -1,0 +1,528 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <unistd.h>
+#include <iostream>
+# include <fcntl.h>	/* For O_* constants */
+# include <sys/stat.h>	/* For mode constants */
+# include <mqueue.h>
+# include <string.h>
+<<<<<<< HEAD
+IPC_RMID
+#include <fstream>
+#include <vector>
+#include <signal.h>
+# define BUF_LEN 512
+#define MAXLINE 1024
+#define MQ_NAME "/tmp"
+using namespace std;
+int writefile (char buf[1024],const char * name);
+int plock(int mutex);
+int vlock(int mutex);
+char * readfile (const char * name);
+void backserie(mqd_t My_MQ, char handle[BUF_LEN],int connfd,int count,char * filename);
+
+bool react=false;
+
+void reaction(int sig)
+{
+	react=true;
+}
+
+void noreaction(int sig)
+{
+}
+
+
+int main(int argc, char** argv)
+{
+
+
+//const char* MQ_NAME1[]={"/temp","/queuetest"};
+int    listenfd;
+struct sockaddr_in    servaddr;
+int     n=0;
+int count=0;
+char prio[3]={'0','0','0'};
+int prioer=0;
+char continu[2];
+vector<char *> clientpid;
+int full=0;
+int lock=0;
+=======
+#include <fstream>
+#include <vector>
+# define BUF_LEN 512
+#define MAXLINE 4096
+#define MQ_NAME "/temp"
+using namespace std;
+int writefile (char buf[1024],const char * name);
+int plock(int mutex);
+int vlock({int mutex);
+char * readfile (const char * name);
+void backserie(mqd_t My_MQ, char handle[BUF_LEN],int connfd,int count,char * filename);
+int main(int argc, char** argv)
+{
+
+int full=0;
+int empty=1;
+//const char* MQ_NAME1[]={"/temp","/queuetest"};
+int    listenfd, connfd;
+struct sockaddr_in    servaddr;
+int     n=0;
+int count=0;
+
+char prio[3]={'0','0','0'};
+int prioer=0;
+char continu[1];
+continu[0]='y';
+vector<char *> clientpid;
+
+>>>>>>> ea607456436a3d1fe0c46a781e2a6bdbc76fc413
+
+system("clear");
+if( (listenfd = socket(AF_INET, SOCK_STREAM, 0)) == -1 ){
+exit(0);
+}
+
+memset(&servaddr, 0, sizeof(servaddr));
+servaddr.sin_family = AF_INET;
+servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
+servaddr.sin_port = htons(4479);
+
+if( bind(listenfd, (struct sockaddr*)&servaddr, sizeof(servaddr)) == -1){
+   cout<<"bind errer";
+exit(0);
+<<<<<<< HEAD
+}
+
+if( listen(listenfd, 10) == -1){
+cout<<"listen ERRE";
+exit(0);
+}
+
+
+int mainclient=getpid();
+while(1){
+
+//continu[0] == 'y';
+
+            continu[0] = 'y';
+            continu[1]='\0';
+            int connfd;
+            int client=0;
+             //const char* MQ_NAME=MQ_NAME1[client];
+
+            char 			buff[BUF_LEN];
+            char 			handle[BUF_LEN];
+            /*prosix MQ:messages queeu*/
+            struct mq_attr	attr;
+            mqd_t 		My_MQ;
+            attr.mq_flags = rand()/10;
+            attr.mq_maxmsg = 10;
+            attr.mq_msgsize = BUF_LEN;
+            attr.mq_curmsgs = 0;
+            /*processus mq créer*/
+            My_MQ = mq_open(MQ_NAME, O_RDWR | O_CREAT, 0644, &attr);
+               printf("%d", My_MQ);
+            if ((int) My_MQ == -1)
+            {
+                  cout<<"Error : mq_open failed !"<<endl;
+                  exit(0);
+            }
+
+
+            while((connfd = accept(listenfd, (struct sockaddr*)NULL, NULL))<=0)continue;
+            char fs[BUF_LEN];
+            if(recv(connfd, fs, BUF_LEN,0)< 0)
+            {
+            cout<<"recv meeeas erre"<<endl;
+            exit(0);
+            }
+            int machinetype= strcmp(fs,"worker");
+            char machinetype1;
+            char filename[50];
+            char * filena;
+            char typeworker1[50];
+			char* filesend;
+            switch(machinetype)
+			{
+            case 0:
+				if(fork()==0)
+				{
+					
+					struct sigaction action;
+					action.sa_handler=reaction;
+					sigaction(SIGCHLD,&action,NULL);
+				    cout<<"new worker"<<endl;
+				    while(1)
+					{
+						if(react)
+						{
+							printf("react\n");
+							react=0;
+	                    	lock=plock(full);
+	                    	//filena=clientpid.front();
+							sprintf(filena,"%dprocessus.txt",getppid());
+							printf("zzzz\t%s\n",filena);
+	                        filesend=readfile(filena);
+printf("eeee\t%s\n",filesend);
+	                        if(send(connfd, filesend, strlen(filesend),0)< 0)
+	                        {
+	                        	cout<<"pas  file de processus est erre"<<endl;
+	                        	exit(0);
+	                        }
+
+	                        n = recv(connfd, typeworker1, BUF_LEN, 0);
+	                        typeworker1[n] = '\0';
+	                        cout<<getpid()<<" worker "<<typeworker1;
+
+	                        if( remove( filename) != 0 )
+	                        	perror( "Error deleting file" );
+	                        clientpid.erase(clientpid.begin());
+
+                   
+                    	}
+					}
+				}
+		        break;                  	
+
+                default:
+ struct msqid_ds * bufff;
+			msgctl(My_MQ,IPC_RMID,bufff);
+                    client=getpid();
+                    sprintf(filename,"%dprocessus.txt",client);
+                    clientpid.push_back(filename);
+                    cout<<" \nclient "<<client<<" :\n";
+                    while(continu[0]=='y')
+					{
+                        memset(handle, 0, BUF_LEN);
+                    	printf("\t222\n");
+                        n = recv(connfd, buff, sizeof(buff), 0);
+                        buff[n] = '\0';
+                    	printf("\t333\n");
+                        n = recv(connfd, prio, sizeof(buff), 0);
+                        prio[n]='\0';
+                        std::string str(prio);
+                        prioer=atoi(prio);
+                        count++;
+                        cout<<"processus: "<<buff<<"      priorite:"<<prioer<<endl;
+                        printf("\t%s\n",buff);
+						printf("\t444\n");
+                        mq_send(My_MQ, buff, strlen(buff), prioer);
+                        printf("\t555\n");
+                        n = recv(connfd, continu, BUF_LEN, 0);
+                        continu[1]='\0';
+                    }
+                    cout<<endl;
+                   	backserie( My_MQ ,handle,connfd,count,filename);
+					mq_close(My_MQ);
+                    mq_unlink(MQ_NAME);
+                    close(connfd);
+					killpg(0,SIGCHLD);
+                }
+                     //对每个client的东西进行排序
+            }
+
+close(listenfd);
+=======
+>>>>>>> ea607456436a3d1fe0c46a781e2a6bdbc76fc413
+}
+
+if( listen(listenfd, 10) == -1){
+cout<<"listen ERRE";
+exit(0);
+}
+
+void backserie(mqd_t My_MQ, char	handle[BUF_LEN],int connfd,int count,char * filename){
+
+
+<<<<<<< HEAD
+  while(count>0){
+            char prio[10],timerun[10],stat[5]/*,space[2]=' ',spaceln[2]='\n'*/;
+=======
+while(1){
+
+
+            fork();
+
+            int client=0;
+             //const char* MQ_NAME=MQ_NAME1[client];
+
+            char 			buff[BUF_LEN];
+            char 			handle[BUF_LEN];
+            /*prosix MQ:messages queeu*/
+            struct mq_attr	attr;
+            mqd_t 		My_MQ;
+            attr.mq_flags = rand()/10;
+            attr.mq_maxmsg = 10;
+            attr.mq_msgsize = BUF_LEN;
+            attr.mq_curmsgs = 0;
+            /*processus mq créer*/
+            My_MQ = mq_open(MQ_NAME, O_RDWR | O_CREAT, 0644, &attr);
+            if ((int) My_MQ == -1)
+            {
+                  cout<<"Error : mq_open failed !"<<endl;
+                  exit(0);
+            }
+
+
+            while((connfd = accept(listenfd, (struct sockaddr*)NULL, NULL))<=0)continue;
+            char fs[BUF_LEN];
+            if(recv(connfd, fs, BUF_LEN,0)< 0)
+            {
+            cout<<"recv meeeas erre"<<endl;
+            exit(0);
+            }
+            int machinetype= strcmp(fs,"worker");
+            char filename[50];
+           char * filena;
+           char typeworker1[50];
+            char* filesend;
+              char* filesendnull;
+            switch(machinetype) {
+
+                    case 0:     while(1){
+					  if(full){
+                                         plock(full);
+                                        
+                                      if(clientpid.size()>0){
+
+                                           filena=clientpid.front();
+                                            filesend=readfile(filena);
+                                            if(send(connfd, filesend, strlen(filesend),0)< 0)
+                                            {
+                                            cout<<"pas  file de processus est erre"<<endl;
+                                            exit(0);
+                                            }
+
+                                              n = recv(connfd, typeworker1, BUF_LEN, 0);
+                                                typeworker1[n] = '\0';
+                                             cout<<getpid()<<" worker "<<typeworker1;
+
+                                            if( remove( filename) != 0 )
+                                                  perror( "Error deleting file" );
+                                              clientpid.erase(clientpid.begin());
+                                         }	
+
+                                     }
+				break;
+
+                       default:
+                                  
+                                      
+                                    client=getpid();
+                                    cout<<" \nclient "<<client<<" :\n";
+                                    while(continu[0] == 'y'){
+                                                        memset(handle, 0, BUF_LEN);
+                                                        n = recv(connfd, buff, BUF_LEN, 0);
+                                                        buff[n] = '\0';
+                                                        n = recv(connfd, prio, BUF_LEN, 0);
+                                                        prio[n]='\0';
+                                                        std::string str(prio);
+                                                        prioer=atoi(prio);
+                                                        count++;
+                                                        cout<<"processus: "<<buff<<"      priorite:"<<prioer<<endl;
+                                                        sprintf(filename,"%dprocessus.txt",client);
+                                                          clientpid.push_back(filename);
+                                                        mq_send(My_MQ, buff, strlen(buff), prioer);
+                                                        n = recv(connfd, continu, BUF_LEN, 0);
+                                                        continu[1]='\0';
+                                                   }
+                                         cout<<endl;
+                                       backserie( My_MQ ,handle,connfd,count,filename);
+                                 
+					vlock(full);
+							
+
+                    }
+                     //对每个client的东西进行排序
+
+                     mq_close(My_MQ);
+                     mq_unlink(MQ_NAME);
+                    close(connfd);
+
+
+            }
+
+close(listenfd);
+}
+>>>>>>> ea607456436a3d1fe0c46a781e2a6bdbc76fc413
+
+            mq_attr mqAttr;
+            mq_getattr(My_MQ, &mqAttr);
+            sprintf(prio,"%ld",mqAttr.mq_curmsgs);
+            sprintf(timerun,"%ld",mqAttr.mq_msgsize);
+            sprintf(stat,"%s","attend");
+            memset(handle, 0, BUF_LEN);
+            int len=mq_receive(My_MQ, handle, BUF_LEN, NULL);
+            handle[len]='\0';
+
+<<<<<<< HEAD
+           /* writefile(handle,filename);
+//writefile(space,filename);
+writefile(" ",filename);
+            writefile(prio,filename);
+//writefile(space,filename);
+writefile(" ",filename);
+            writefile(timerun,filename);
+//writefile(space,filename);
+writefile(" ",filename);
+            writefile(stat,filename);
+//writefile(spaceln,filename);
+writefile("\n",filename);*/
+
+char buf[1024];
+sprintf(buf,"%s %s %s %s\n",handle,prio,timerun,stat);
+writefile(buf,filename);
+=======
+void backserie(mqd_t My_MQ, char	handle[BUF_LEN],int connfd,int count,char * filename){
+
+>>>>>>> ea607456436a3d1fe0c46a781e2a6bdbc76fc413
+
+  while(count>0){
+            char prio[10],timerun[10],stat[5],space[2]=" ",spaceln[2]="\n";;
+
+<<<<<<< HEAD
+            if(send(connfd, handle, strlen(handle),0)< 0)
+            {
+            cout<<"hanle msg par priority"<<endl;
+            exit(0);
+            }
+            cout<<"priority: "<<prio<<"   processus:"<<handle<<endl;
+            count--;
+
+  }
+}
+
+  char * readfile (const char * name) {
+  std::ifstream is (name, std::ifstream::binary);
+    if (is) {
+      // get length of file:
+      is.seekg (0, is.end);
+      int length = is.tellg();
+      is.seekg (0, is.beg);
+
+      char * buffer = new char [length];
+
+      std::cout << "Reading " << length << " characters... ";
+      // read data as a block:
+      is.read (buffer,length);
+
+      if (is)
+        std::cout << "all characters read successfully.";
+      else
+        std::cout << "error: only " << is.gcount() << " could be read";
+      is.close();
+
+      // ...buffer contains the entire file...
+
+    //  delete[] buffer;
+
+  return buffer;
+}
+}
+=======
+            mq_attr mqAttr;
+            mq_getattr(My_MQ, &mqAttr);
+            sprintf(prio,"%ld",mqAttr.mq_curmsgs);
+            sprintf(timerun,"%ld",mqAttr.mq_msgsize);
+            sprintf(stat,"%s","attend");
+            memset(handle, 0, BUF_LEN);
+            int len=mq_receive(My_MQ, handle, BUF_LEN, NULL);
+            handle[len]='\0';
+
+            writefile(handle,filename);writefile(space,filename);
+            writefile(prio,filename);writefile(space,filename);
+            writefile(timerun,filename);writefile(space,filename);
+            writefile(stat,filename);writefile(spaceln,filename);
+            if(send(connfd, handle, strlen(handle),0)< 0)
+            {
+            cout<<"hanle msg par priority"<<endl;
+            exit(0);
+            }
+            cout<<"priority: "<<prio<<"   processus:"<<handle<<endl;
+            count--;
+
+  }
+}
+
+  char * readfile (const char * name) {
+  std::ifstream is (name, std::ifstream::binary);
+    if (is) {
+      // get length of file:
+      is.seekg (0, is.end);
+      int length = is.tellg();
+      is.seekg (0, is.beg);
+
+      char * buffer = new char [length];
+
+      std::cout << "Reading " << length << " characters... ";
+      // read data as a block:
+      is.read (buffer,length);
+
+      if (is)
+        std::cout << "all characters read successfully.";
+      else
+        std::cout << "error: only " << is.gcount() << " could be read";
+      is.close();
+
+      // ...buffer contains the entire file...
+
+    //  delete[] buffer;
+>>>>>>> ea607456436a3d1fe0c46a781e2a6bdbc76fc413
+
+  return buffer;
+}
+}
+
+
+int writefile(  char buf[1024],const char * name)
+{
+/*ofstream myfile;
+myfile.open(name,ios::out);  //新建一个可写的文件
+printf("wwwwwwww\t%s\t%s\n",buf,name);
+myfile << buf;
+myfile.close();*/
+FILE* f=fopen(name,"w");
+fprintf(f,"%s",buf);
+fclose(f);
+return 0;
+}
+
+<<<<<<< HEAD
+
+int plock(int mutex){
+  mutex--;
+  return mutex;
+}
+
+
+int vlock(int mutex){
+  mutex++;
+  return mutex;
+=======
+int writefile(  char buf[1024],const char * name)
+{
+ofstream myfile;
+myfile.open(name,ios::app);  //新建一个可写的文件
+myfile <<buf;
+myfile.close();
+return 0;
+}
+
+
+int plock(int mutex){
+  p--;
+  return p;
+}
+
+
+int vlock(int mutex){
+  p++;
+  return p;
+>>>>>>> ea607456436a3d1fe0c46a781e2a6bdbc76fc413
+}
